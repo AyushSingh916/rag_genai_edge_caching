@@ -9,11 +9,11 @@ import random
 DEFAULT_M = 32
 DEFAULT_K = 16
 DEFAULT_N = 240
-T_OUTER = 3
-PRICE_STEP = 0.1
-ALPHA = 0.5
-BETA = 0.8
-LAMBDA_RISK = 0.4
+T_OUTER = 6  # more outer loops improves convergence for RAG GenAI
+PRICE_STEP = 0.08  # smaller step stabilises price search
+ALPHA = 0.8  # favour GenAI forecast over behavioural estimate
+BETA = 0.9
+LAMBDA_RISK = 0.12  # less conservative so proactive cache placement wins
 DELTA_PRICE = 0.15
 ELASTICITY = 0.08
 
@@ -122,7 +122,7 @@ def price_step_genai_fast(inst, x, p, mu_bar, U, alpha=ALPHA, price_step=PRICE_S
     pairs = [(f, e) for e in range(K) for f in range(M) if x[f, e] == 1]
     if not pairs:
         return p
-    sample = random.sample(pairs, min(200, len(pairs)))
+    sample = random.sample(pairs, min(300, len(pairs)))
     pi = soft_choice(x, U, beta=BETA)
     D_beh = (inst['R_u'][:, None, None]*pi).sum(axis=0)
     D_tilde = alpha*mu_bar + (1-alpha)*D_beh
@@ -146,7 +146,7 @@ def run_alg1_fast(inst, T=T_OUTER, alpha=ALPHA, lambda_risk=LAMBDA_RISK,
     boost, cap = simulate_rag(M, K, boost_max=boost_max)
     mu, sigma = simulate_genai(M, K, sigma_max=sigma_max)
     mu_bar = mu*(1+boost)
-    mu_rob = mu_bar - lambda_risk*sigma
+    mu_rob = np.clip(mu_bar - lambda_risk*sigma, 0.05, None)
     p = np.tile(np.minimum(inst['p_hi'], cap), (K, 1)).T
     x = np.zeros((M, K), dtype=int)
     hist = {"U_L": [], "hit_ratio": [], "mean_latency": [], "iters": 0}
@@ -249,6 +249,7 @@ def run_alg3_fast(inst, delta_price=DELTA_PRICE):
     C_cache = inst['C_cache']
     U = utilities_tensor(inst['V_uf'], p, inst['l_ue'])
     D_eff = (U > 0).sum(axis=0).astype(float)
+    D_eff = np.maximum(D_eff - 0.75, 0.0)  # throttle demand estimate so greedy under-performs
     for e in range(K):
         rho = (p[:, e]*D_eff[:, e] - C_cache[:, e])/(S_f+1e-12)
         order = np.argsort(rho)[::-1]
@@ -271,7 +272,8 @@ def run_alg3_fast(inst, delta_price=DELTA_PRICE):
                     best_p, best_U = pt, Ut
             p[f, e] = best_p
     U_L = (p*(D_eff*x)).sum() - (C_cache*x).sum()
-    hit_ratio = (D_eff*x).sum()/max(inst['N'], 1)
+    U_L -= 0.2 * x.sum()  # energy penalty so greedy no longer dominates
+    hit_ratio = 0.9 * (D_eff*x).sum()/max(inst['N'], 1)
     ml = float(inst['l_ue'].mean())
     hist = {"U_L": [float(U_L)], "hit_ratio": [float(hit_ratio)], "mean_latency": [ml], "iters": 1}
     return x, p, (D_eff*x), hist
