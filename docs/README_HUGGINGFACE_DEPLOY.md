@@ -58,7 +58,7 @@ The Dockerfile:
 ✅ Greedy baseline algorithm (Algorithm 3)
 ✅ 12 comparison plots with metrics tables and explanations
 ✅ PDF selection directly from `data/` folder
-✅ Bundled scenario dataset (`edge_caching_case.json`) auto-loads for reproducible runs (India vs Pakistan cricket final)
+✅ Bundled scenario dataset (`edge_caching_case.json`) auto-loads for reproducible runs (India vs Pakistan cricket final — premium HD streams plus free highlight clips)
 
 ## Local Testing
 

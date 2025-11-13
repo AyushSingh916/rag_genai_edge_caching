@@ -1,19 +1,20 @@
-Edge Caching Policy — India vs Pakistan Cricket Final (RAG + GenAI)
+Edge Caching Playbook — India vs Pakistan Cricket Final
 
-Scenario Overview:
-- Streaming and data services for the Indo-Pak cricket final (stadiums, fan zones, media rooms).
-- Demand peaks across Mumbai, Delhi, Lahore, Karachi, Dubai, London watch parties.
+What’s Happening?
+- The match is being streamed live worldwide.
+- Premium HD feeds charge 1.45–1.95 credits; bite-sized highlight clips stay free so every fan gets something.
+- Stadium cameras, TV trucks, and fan zones in Mumbai, Delhi, Lahore, Karachi, Dubai, and London are pulling heavy traffic.
 
-Winning Strategy:
-1. Use bundled dataset `edge_caching_case.json` (stadium + metro demand, price caps 1.45–1.95).
-2. Place any supplementary PDFs (press briefings, sponsorship decks) in `data/`.
-3. Set `GROQ_API_KEY` in the environment to leverage Groq Llama 3.3 for real-time demand forecasts.
-4. Enable “Use RAG-GenAI”, select cricket docs, and run ≥6 optimisation rounds.
-5. Keep λ ≤ 0.12, α ≥ 0.8 so Alg-1 (RAG GenAI Stackelberg) dominates.
-6. Boost nodes: stadium edges 0–3, metro hubs 4–7, diaspora hubs 8–11.
-7. Cap premium highlight feeds at 1.45–1.95 credits; mid-tier content can reach 2.1.
+How to stay ahead:
+1. Use the bundled dataset `edge_caching_case.json` (already built from the match schedule and venue demand).
+2. Drop any extra PDFs (press notes, sponsor decks) into `data/` for richer RAG context.
+3. Set the `GROQ_API_KEY` environment variable to let Groq Llama 3.3 fine-tune demand predictions.
+4. Enable “Use RAG-GenAI”, pick the cricket files, and run at least 6 optimisation rounds.
+5. Keep λ ≤ 0.12 and α ≥ 0.8 so Alg-1 (RAG + GenAI Stackelberg) stays on top.
+6. Boost priority edges: 0–3 for stadium feeds, 4–7 for metro control rooms, 8–11 for global fan zones.
+7. Hold premium prices under 1.95 credits; free clips should remain truly free.
 
-Verification Checklist:
+Quick checks before you share results:
 - Alg-1 utility > Alg-2 utility > Alg-3 utility.
-- Jain’s fairness index highest for Alg-1; mean latency lowest for Alg-1.
-- Any run without documents/API must be labelled as synthetic fallback.
+- Jain’s fairness highest and latency lowest for Alg-1.
+- If you skip documents or the API, label the run as “synthetic fallback”.

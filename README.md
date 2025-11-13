@@ -107,7 +107,7 @@ The project includes a Dockerfile configured for Hugging Face Spaces:
 
 ### RAG-GenAI (Optional)
 - Add your PDFs/CSVs/JSONs to the `data/` folder (sample: `edge_caching_brief.pdf`)
-- Default scenario dataset `edge_caching_case.json` (India vs Pakistan cricket final) is auto-loaded for reproducible results
+- Default scenario dataset `edge_caching_case.json` (India vs Pakistan cricket final broadcast with premium + free streams) is auto-loaded for reproducible results
 - Check "Use RAG-GenAI" in the sidebar and select documents from the dropdown
 - Set the `GROQ_API_KEY` environment variable if you want GenAI forecasting
 - Click "Configure RAG" (fallback synthetic signals used if no docs/API key)

@@ -1,9 +1,9 @@
 {
   "meta": {
-    "title": "India vs Pakistan Cricket Final",
-    "description": "Edge caching for streaming highlights, press conferences, and merchandising data during the subcontinental cricket final watched by millions.",
-    "price_caps_note": "Broadcasters agreed to hold premium feed prices between 1.45 and 1.95 credits to avoid backlash.",
-    "boost_logic": "Boost stadium feeds, Mumbai/Delhi data centres, Lahore/Karachi hubs, and fan zones worldwide (edges 0-7)."
+    "title": "India vs Pakistan Cricket Final Broadcast",
+    "description": "Millions of fans are streaming the live match, instant highlights, and post-match shows across TV apps and mobiles.",
+    "price_caps_note": "Premium HD streams charge 1.45–1.95 credits, while quick highlight clips stay free to keep casual viewers happy.",
+    "boost_logic": "Give extra capacity to the stadium cameras, Mumbai & Delhi control rooms, Lahore & Karachi viewing parties, and global fan zones (edges 0–7)."
   },
   "price_caps": [
     1.91,
@@ -397,24 +397,6 @@
       0.0,
       0.0,
       0.376,
-      0.0,
-      0.0
-    ],
-    [
-      0.0,
-      0.0,
-      0.0,
-      0.0,
-      0.0,
-      0.0,
-      0.0,
-      0.0,
-      0.0,
-      0.0,
-      0.0,
-      0.0,
-      0.0,
-      0.0,
       0.0,
       0.0
     ],
