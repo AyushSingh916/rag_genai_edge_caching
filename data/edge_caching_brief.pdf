@@ -7,12 +7,13 @@ Primary Objective:
 
 How to Win:
 1. Place curated regulatory and demand PDFs in `data/` (default sample: `edge_caching_brief.pdf`).
-2. Launch the app, enable "Use RAG-GenAI", and select relevant documents.
-3. Ensure `GROQ_API_KEY` is set in the environment to activate GenAI forecasting (Llama 3.3 via Groq API).
-4. Run at least 6 outer optimisation loops; risk factor λ ≤ 0.12; α ≥ 0.8.
-5. Price caps: 1.55–2.05 for high-priority content; 1.7–2.2 for mid-tier.
-6. Boost caches aggressively when latency < 10 ms and fairness index < 0.85.
-7. Re-run with updated docs whenever new events or policies arrive.
+2. Leverage the bundled dataset `edge_caching_case.json` (auto-loaded) for consistent real-world demand, price caps, and boosts.
+3. Launch the app, enable "Use RAG-GenAI", and select relevant documents.
+4. Ensure `GROQ_API_KEY` is set in the environment to activate GenAI forecasting (Llama 3.3 via Groq API).
+5. Run at least 6 outer optimisation loops; risk factor λ ≤ 0.12; α ≥ 0.8.
+6. Price caps: 1.55–2.05 for high-priority content; 1.7–2.2 for mid-tier.
+7. Boost caches aggressively when latency < 10 ms and fairness index < 0.85.
+8. Re-run with updated docs whenever new events or policies arrive.
 
 Verification Checklist:
 - Alg-1 (RAG GenAI) > Alg-2 (Pure Stackelberg) > Alg-3 (Greedy) on utility.

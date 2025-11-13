@@ -6,6 +6,7 @@ It replaces the dummy simulate_rag and simulate_genai functions with real RAG-ba
 
 import numpy as np
 import os
+import json
 from typing import Tuple, Optional
 from rag_genai_service import EdgeCachingRAG
 
@@ -14,6 +15,27 @@ _rag_instance = None
 _doc_paths = []
 _logs_path = None
 _groq_api_key = None
+
+_SCENARIO_CACHE = None
+_SCENARIO_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'data', 'edge_caching_case.json')
+
+
+def _load_scenario():
+    """Load bundled scenario data from JSON if available."""
+    global _SCENARIO_CACHE
+    if _SCENARIO_CACHE is None:
+        path = os.path.abspath(_SCENARIO_PATH)
+        if os.path.isfile(path):
+            try:
+                with open(path, 'r', encoding='utf-8') as f:
+                    _SCENARIO_CACHE = json.load(f)
+                print(f"Loaded scenario dataset from {path}")
+            except Exception as e:
+                print(f"Warning: Failed to read scenario dataset: {e}")
+                _SCENARIO_CACHE = {}
+        else:
+            _SCENARIO_CACHE = {}
+    return _SCENARIO_CACHE
 
 
 def initialize_rag(doc_paths=None, logs_path=None, groq_api_key=None):
@@ -68,6 +90,27 @@ def simulate_rag(M: int, K: int, boost_max: float = 0.5) -> Tuple[np.ndarray, np
         except Exception as e:
             print(f"Warning: RAG retrieval failed, using fallback: {e}")
     
+    scenario = _load_scenario()
+    if scenario:
+        price_caps = scenario.get('price_caps')
+        event_boosts = scenario.get('event_boosts')
+        if price_caps:
+            cap = np.full(M, 2.0)
+            pc = np.array(price_caps, dtype=float)
+            length = min(M, pc.shape[0])
+            cap[:length] = pc[:length]
+        else:
+            cap = np.full(M, 2.0)
+        if event_boosts:
+            boost = np.zeros((M, K))
+            eb = np.array(event_boosts, dtype=float)
+            rows = min(M, eb.shape[0])
+            cols = min(K, eb.shape[1])
+            boost[:rows, :cols] = eb[:rows, :cols]
+        else:
+            boost = np.zeros((M, K))
+        return boost, cap
+
     # Fallback to deterministic synthesis based on hash
     boost = np.zeros((M, K))
     cap = np.full(M, 2.0)
@@ -116,6 +159,26 @@ def simulate_genai(M: int, K: int, sigma_max: float = 0.4) -> Tuple[np.ndarray, 
         except Exception as e:
             print(f"Warning: GenAI forecast failed, using fallback: {e}")
     
+    scenario = _load_scenario()
+    if scenario:
+        mu_data = scenario.get('mu')
+        sigma_data = scenario.get('sigma')
+        mu = np.zeros((M, K))
+        sigma = np.zeros((M, K))
+        if mu_data:
+            mu_arr = np.array(mu_data, dtype=float)
+            rows = min(M, mu_arr.shape[0])
+            cols = min(K, mu_arr.shape[1])
+            mu[:rows, :cols] = mu_arr[:rows, :cols]
+        if sigma_data:
+            sigma_arr = np.array(sigma_data, dtype=float)
+            rows = min(M, sigma_arr.shape[0])
+            cols = min(K, sigma_arr.shape[1])
+            sigma[:rows, :cols] = sigma_arr[:rows, :cols]
+        sigma = np.clip(sigma, 0.05, sigma_max)
+        mu = np.maximum(mu, 0.05)
+        return mu, sigma
+
     # Fallback to statistical forecast
     # Use deterministic hash-based generation for reproducibility
     import hashlib

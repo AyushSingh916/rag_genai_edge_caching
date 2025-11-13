@@ -21,7 +21,8 @@
      ├── rag_genai_service.py
      └── edge_caching_rag_alg.py
    data/
-     └── edge_caching_brief.pdf
+     ├── edge_caching_brief.pdf
+     └── edge_caching_case.json
    README.md (optional)
    ```
 
@@ -57,6 +58,7 @@ The Dockerfile:
 ✅ Greedy baseline algorithm (Algorithm 3)
 ✅ 12 comparison plots with metrics tables and explanations
 ✅ PDF selection directly from `data/` folder
+✅ Bundled scenario dataset (`edge_caching_case.json`) auto-loads for reproducible runs
 
 ## Local Testing
 
