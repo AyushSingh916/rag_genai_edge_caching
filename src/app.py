@@ -76,18 +76,41 @@ with st.sidebar:
     if use_rag:
         try:
             from edge_caching_rag_alg import configure_rag  # Already in same directory
-            doc_paths = st.text_input("Document Paths (comma-separated)", "")
-            logs_path = st.text_input("Logs Path", "")
-            groq_key = st.text_input("Groq API Key", type="password")
-            
+
+            data_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "data")
+            available_docs = []
+            if os.path.isdir(data_dir):
+                for name in os.listdir(data_dir):
+                    if name.lower().endswith((".pdf", ".txt", ".md", ".json", ".csv")):
+                        available_docs.append(name)
+            available_docs.sort()
+
+            st.write("Environment variable `GROQ_API_KEY` will be used automatically if set.")
+            if not available_docs:
+                st.info("Place document files (e.g., PDFs) inside the `data/` folder to enable RAG.")
+
+            selected_docs = st.multiselect(
+                "Select documents from data/",
+                options=available_docs,
+                default=available_docs[:1] if available_docs else []
+            )
+            extra_doc = st.text_input("Additional document path (optional)", "")
+            logs_path = st.text_input("Logs Path (optional)", "")
+
             if st.button("Configure RAG"):
-                paths = [p.strip() for p in doc_paths.split(",")] if doc_paths else []
-                configure_rag(
-                    doc_paths=paths if paths else None,
-                    logs_path=logs_path if logs_path else None,
-                    groq_api_key=groq_key if groq_key else None
-                )
-                st.success("RAG configured!")
+                selected_paths = [os.path.join(data_dir, doc) for doc in selected_docs]
+                if extra_doc.strip():
+                    selected_paths.append(extra_doc.strip())
+
+                if not selected_paths:
+                    st.warning("Please select or provide at least one document path.")
+                else:
+                    configure_rag(
+                        doc_paths=selected_paths,
+                        logs_path=logs_path if logs_path else None,
+                        groq_api_key=None
+                    )
+                    st.success("RAG configured with documents: " + ", ".join(selected_paths))
         except ImportError:
             st.warning("RAG module not available. Using fallback methods.")
 

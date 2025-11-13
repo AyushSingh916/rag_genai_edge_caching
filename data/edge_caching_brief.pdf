@@ -1,0 +1,8 @@
+Edge Caching Resource Allocation Policy
+
+Key Points:
+- Prioritize AI-assisted demand forecasting using RAG and GenAI.
+- Apply tighter price caps (1.6-2.2) for critical content.
+- Increase cache boosts for events at edge nodes with latency < 10ms.
+- Use conservative risk factor lambda <= 0.2 to avoid under-utilization.
+- Preferred strategies: adaptive pricing, fairness balancing, latency-aware placement.

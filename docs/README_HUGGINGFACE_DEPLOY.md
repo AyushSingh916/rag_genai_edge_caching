@@ -11,7 +11,7 @@
      - **Visibility**: Public or Private
 
 2. **Upload Required Files**
-   Upload these files maintaining the folder structure:
+   Upload these files while preserving the folder structure:
    ```
    Dockerfile
    requirements.txt
@@ -20,58 +20,55 @@
      ├── algorithms.py
      ├── rag_genai_service.py
      └── edge_caching_rag_alg.py
+   data/
+     └── edge_caching_brief.pdf
    README.md (optional)
    ```
 
 3. **Configure Environment Variables (Optional)**
-   In Space Settings → Variables, add:
-   - `GROQ_API_KEY` - Your Groq API key for GenAI features
+   - Set `GROQ_API_KEY` in the Space settings if you want GenAI forecasting
 
 4. **Deploy**
-   Hugging Face will automatically build and deploy your Space!
+   - Hugging Face will automatically build and serve the Space
 
-## Files Structure
+## File Structure
 
 ```
 your-space/
 ├── Dockerfile              # Container configuration
 ├── requirements.txt        # Python dependencies
-└── src/                    # Source code
-    ├── app.py              # Streamlit dashboard
-    ├── algorithms.py       # Algorithm implementations
-    ├── rag_genai_service.py    # RAG service (optional)
-    └── edge_caching_rag_alg.py # RAG integration (optional)
+├── src/                    # Source code (Streamlit app + algorithms)
+└── data/                   # RAG documents (PDF/CSV/JSON)
 ```
 
 ## Dockerfile Details
 
 The Dockerfile:
-- Uses Python 3.9 slim base
-- Installs dependencies from requirements.txt
-- Exposes port 7860 (Hugging Face standard)
-- Runs Streamlit with proper configuration
+- Uses Python 3.9 slim base image
+- Installs dependencies from `requirements.txt`
+- Copies the `src/` directory into the container
+- Exposes port 7860 (Streamlit default on Hugging Face)
+- Runs `streamlit run src/app.py`
 
 ## Features
 
-✅ All 12 comparison plots
-✅ Metrics tables below each plot
-✅ Algorithm execution details
-✅ Plot generation explanations
-✅ Interactive sidebar controls
-✅ RAG-GenAI integration (optional)
+✅ RAG-GenAI Stackelberg algorithm (Algorithm 1)
+✅ Pure Stackelberg algorithm (Algorithm 2)
+✅ Greedy baseline algorithm (Algorithm 3)
+✅ 12 comparison plots with metrics tables and explanations
+✅ PDF selection directly from `data/` folder
 
-## Testing Locally
-
-Before deploying, test locally:
+## Local Testing
 
 ```bash
-# Build Docker image
+# Build the image
 docker build -t edge-caching-dashboard .
 
-# Run container
+# Run the container
 docker run -p 7860:7860 edge-caching-dashboard
 
-# Access at http://localhost:7860
+# Open http://localhost:7860
+docker logs -f <container-id>
 ```
 
 ## Troubleshooting
@@ -79,21 +76,20 @@ docker run -p 7860:7860 edge-caching-dashboard
 **Build fails:**
 - Check Dockerfile syntax
 - Verify all files are uploaded
-- Check requirements.txt
+- Confirm folder structure matches the repository
 
 **App doesn't start:**
-- Check Space logs
-- Verify port 7860 is exposed
-- Ensure src/app.py is correct
+- Inspect Space logs
+- Confirm port 7860 is exposed
+- Ensure `src/app.py` exists and imports work
 
-**RAG not working:**
-- Set GROQ_API_KEY in environment variables
-- Fallback methods work if RAG unavailable
+**RAG not engaging:**
+- Verify `data/` contains documents (e.g., `edge_caching_brief.pdf`)
+- Ensure `Use RAG-GenAI` is checked and documents selected in the UI
+- Set `GROQ_API_KEY` if GenAI forecasting is required
 
 ## Notes
 
-- Port 7860 is required for Hugging Face Spaces
-- All plots show detailed metrics and execution info
-- RAG features are optional with fallbacks
-- Dashboard is fully interactive
-
+- The Streamlit UI automatically lists PDFs from the `data/` folder
+- Without `GROQ_API_KEY`, the app falls back to deterministic synthetic data
+- You can add additional PDFs/CSVs/JSONs to `data/` to customize behavior

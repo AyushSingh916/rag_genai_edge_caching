@@ -1,3 +1,14 @@
+---
+title: Edge Caching Stackelberg Algorithms
+emoji: 📊
+colorFrom: blue
+colorTo: purple
+sdk: docker
+sdk_version: "4.0.0"
+app_file: src/app.py
+pinned: false
+---
+
 # Edge Caching Stackelberg Algorithms - Streamlit Dashboard
 
 A comprehensive Streamlit dashboard for comparing three edge caching algorithms using Stackelberg game theory, ready for deployment on Hugging Face Spaces.
@@ -95,10 +106,10 @@ The project includes a Dockerfile configured for Hugging Face Spaces:
 ## 🔧 Configuration
 
 ### RAG-GenAI (Optional)
-- Check "Use RAG-GenAI" in sidebar
-- Enter document paths
-- Enter Groq API key
-- Click "Configure RAG"
+- Add your PDFs/CSVs/JSONs to the `data/` folder (sample: `edge_caching_brief.pdf`)
+- Check "Use RAG-GenAI" in the sidebar and select documents from the dropdown
+- Set the `GROQ_API_KEY` environment variable if you want GenAI forecasting
+- Click "Configure RAG" (fallback synthetic signals used if no docs/API key)
 
 ## 📊 Metrics Display
 
